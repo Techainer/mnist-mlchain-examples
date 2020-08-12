@@ -29,10 +29,13 @@ class MNISTClassifier(object):
             image (numpy.ndarray): An input image.
 
         Returns:
-            Class number of input image.
+            class_name (int): Class number of input image.
+            conf (float): Confidence level of the model
         """
         if len(image.shape) == 3 and image.shape[2] != 1:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         image = np.reshape(image, (1, 28, 28, 1))
         res = self.sess.run(self.output, feed_dict={self.input: image})
-        return np.argmax(res)
+        class_name = int(np.argmax(res))
+        conf = float(np.max(res))
+        return class_name, conf

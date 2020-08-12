@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>MNIST Tensorflow</title>
+
+    <style>
+        .grid {
+            background: -webkit-linear-gradient(top, transparent 39px, gray 40px), -webkit-linear-gradient(left, transparent 39px, gray 40px);
+            background: -moz-linear-gradient(top, transparent 39px, gray 40px), -moz-linear-gradient(left, transparent 39px, gray 40px);
+            background: -o-linear-gradient(top, transparent 39px, gray 40px), -o-linear-gradient(left, transparent 39px, gray 40px);
+            background: -ms-linear-gradient(top, transparent 39px, gray 40px), -ms-linear-gradient(left, transparent 39px, gray 40px);
+            background: linear-gradient(top, transparent 39px, gray 40px), linear-gradient(left, transparent 39px, gray 40px);
+            -webkit-background-size: 40px 40px;
+            -moz-background-size: 40px 40px;
+            background-size: 40px 40px;
+        }
+        
+        #canvas {
+            width: 100%;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+
+<body id="app">
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Handwritten digits recognition</h1>
+            <p>Implemented by TensorFlow</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="panel panel-default">
+                        <canvas id="canvas" class="grid"></canvas>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <button id="predict-btn" type="button" class="btn btn-primary">Predict</button>
+                    <button id="reset-btn" type="button" class="btn btn-info">Reset</button>
+
+                    <div id="predicts" class="panel-body"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/underscore.js/1.8.3/underscore-min.js"></script>
+
+    <script>
+        var predict = _.template(
+            '<div class="media" style="margin: 10px auto;">' +
+            '<div class="media-left">' +
+            '<h1 style="margin: 0;"><%= num %></h1>' +
+            '</div>' +
+            '<div class="media-body" style="vertical-align: middle;">' +
+            '<h4 class="media-heading"><%= name %></h4>' +
+            'for <%= chance %>% chance' +
+            '</div>' +
+            '</div>'
+        );
+
+        var mousePressed = false;
+        var lastX, lastY;
+        var canvas, ctx;
+
+        function InitCanvas() {
+            var canvas = $('#canvas');
+            ctx = canvas[0].getContext("2d");
+            ctx.canvas.width = canvas.width();
+            ctx.canvas.height = canvas.width();
+            canvas.height(canvas.width());
+
+            $('#canvas').on('mousedown touchstart', function(e) {
+                mousePressed = true;
+                e.preventDefault();
+                Draw((e.pageX || e.touches[0].pageX) - canvas.offset().left, (e.pageY || e.touches[0].pageY) - canvas.offset().top, false);
+            });
+            $('#canvas').on('mousemove touchmove', function(e) {
+                e.preventDefault();
+                if (mousePressed) {
+                    Draw((e.pageX || e.touches[0].pageX) - canvas.offset().left, (e.pageY || e.touches[0].pageY) - canvas.offset().top, true);
+                }
+            });
+            $('#canvas').on('mouseup touchend', function(e) {
+                e.preventDefault();
+                mousePressed = false;
+            });
+            $('#canvas').on('mouseleave touchcancel', function(e) {
+                e.preventDefault();
+                mousePressed = false;
+            });
+            $('#reset-btn').click(function() {
+                clearArea();
+                $("#predicts").empty();
+            });
+            $('#predict-btn').click(function() {
+                var image = ctx.canvas.toDataURL("image/png");
+                $.ajax({
+                    type: "POST",
+                    url: "/predict",
+                    data: {
+                        image: image
+                    }
+                }).done(function(predicts) {
+                    $('#predicts').empty();
+                    console.log(predicts);
+                    if (predicts['success']) {
+                        name = "Output"
+                        chance = predicts['confidence']
+                        num = predicts['output']
+                        img = image
+                        $('#predicts').append(predict({
+                            name,
+                            img,
+                            chance,
+                            num
+                        }));
+                    } else {
+                        $('#predicts').append("Error");
+                    }
+                });
+            })
+        }
+
+        function Draw(x, y, isDown) {
+            if (isDown) {
+                ctx.beginPath();
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 50;
+                ctx.lineJoin = "round";
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.closePath();
+                ctx.stroke();
+            }
+            lastX = x;
+            lastY = y;
+        }
+
+        function clearArea() {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        }
+
+        InitCanvas();
+    </script>
+
+</body>
+
+</html>
