@@ -12,7 +12,7 @@ gunicorn: # config apm-server if uses gunicorn wrapper
   timeout: 60
   keepalive: 60
   max_requests: 0
-  threads: 1
+  threads: 2
   worker_class: 'gthread'
   umask: '0'
 
