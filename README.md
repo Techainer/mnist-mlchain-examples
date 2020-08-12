@@ -26,6 +26,9 @@ And a frontend will be served at `127.0.0.1:9001/call/frontend`
 
 ![mlchain_web](fig/mlchain_web.png)
 
+You also have a Swagger UI at `127.0.0.1:9001` to see all the API endpoint in details and able to try it out immediately
+
+![swagger](fig/swagger.png)
 
 ## Interact with the Served API
 To interact with the served API you can use Postman or the webpage already host above.
