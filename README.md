@@ -7,7 +7,7 @@ This repo is a demonstration of using MLChain to serve a simple MNIST Classifica
 ```console
 git clone https://github.com/Techainer/mnist-mlchain-examples
 cd mnist-mlchain-examples
-pip3 install requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ## Serve using MLChain
