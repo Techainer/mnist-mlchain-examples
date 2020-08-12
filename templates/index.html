@@ -105,16 +105,17 @@
             });
             $('#predict-btn').click(function() {
                 var image = ctx.canvas.toDataURL("image/png");
+                console.log(image);
                 $.ajax({
                     type: "POST",
-                    url: "predict",
+                    url: "/call_raw/predict_frontend",
                     data: {
                         image: image
                     }
                 }).done(function(predicts) {
                     $('#predicts').empty();
                     console.log(predicts);
-                    if (predicts['success']) {
+                    if ('output' in predicts) {
                         name = "Output"
                         chance = predicts['confidence']
                         num = predicts['output']
