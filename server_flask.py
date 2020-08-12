@@ -1,12 +1,12 @@
 import base64
 import time
+import traceback
 from io import BytesIO
 
 import cv2
 import numpy as np
 from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
-import traceback
 from PIL import Image
 
 from model import MNISTClassifier
@@ -60,6 +60,7 @@ def mnist_predict_frontend():
             data['error'] = str(ex)
     data['run_time'] = "%.2f" % (time.time() - start_time)
     return jsonify(data)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def main():

@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 from mlchain.server import TemplateResponse
 from PIL import Image
+
 from utils import load_graph
 
 
@@ -10,6 +11,7 @@ class MNISTClassifier(object):
     """
     MINIST Classifier that can classifiy handwriten digit
     """
+
     def __init__(self, model_path):
         """
         Init MNIST Classifier.
@@ -24,7 +26,6 @@ class MNISTClassifier(object):
         dummy_image = np.random.rand(1, 28, 28, 1)
         self.sess.run(self.output, feed_dict={self.input: dummy_image})
         print("Loaded model!")
-
 
     def predict(self, image: np.ndarray):
         """
@@ -50,14 +51,13 @@ class MNISTClassifier(object):
             'confidence': float(np.max(res))
         }
 
-
     def predict_frontend(self, image: Image.Image):
-        image = Image.composite(image, Image.new('RGB', image.size, 'white'), image)
+        image = Image.composite(image, Image.new(
+            'RGB', image.size, 'white'), image)
         image = image.convert('L')
         image = image.resize((28, 28), Image.ANTIALIAS)
         image = 1 - np.array(image, dtype=np.float32) / 255.0
         return self.predict(image)
 
-
-    def frontend(self): 
+    def frontend(self):
         return TemplateResponse('index.html')
