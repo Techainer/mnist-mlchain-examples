@@ -52,6 +52,19 @@ class MNISTClassifier(object):
         }
 
     def predict_frontend(self, image: Image.Image):
+        """
+        Run inference on an input image.
+
+        Args:
+            image (Image.Image): A PIL input image.
+
+        Returns:
+            A dictionary contain the prediction result
+            {
+                'output' (int): Class number of input image.
+                'confidence' (float): Confidence level of the model.
+            }
+        """
         image = Image.composite(image, Image.new(
             'RGB', image.size, 'white'), image)
         image = image.convert('L')
@@ -60,4 +73,7 @@ class MNISTClassifier(object):
         return self.predict(image)
 
     def frontend(self):
+        """
+        Return a frontend for web inference at /call/index.html
+        """
         return TemplateResponse('index.html')
