@@ -107,7 +107,7 @@
                 var image = ctx.canvas.toDataURL("image/png");
                 $.ajax({
                     type: "POST",
-                    url: "/predict",
+                    url: "predict",
                     data: {
                         image: image
                     }

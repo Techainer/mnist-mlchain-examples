@@ -39,3 +39,8 @@ class MNISTClassifier(object):
         class_name = int(np.argmax(res))
         conf = float(np.max(res))
         return class_name, conf
+
+
+    def frontend(self): 
+        from mlchain.server import TemplateResponse 
+        return TemplateResponse('index.html')

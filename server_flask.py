@@ -30,7 +30,7 @@ def read_image_from_frontend(image):
     return image
 
 
-@app.route('/predict', methods=['POST'])
+@app.route('predict', methods=['POST'])
 def mnist_predict():
     start_time = time.time()
     data = {"success": False}

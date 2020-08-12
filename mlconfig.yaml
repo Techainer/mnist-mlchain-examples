@@ -6,6 +6,7 @@ port: 9001 # port service
 server: flask # option flask or quart or grpc
 wrapper: gunicorn # option None or gunicorn or hypercorn
 cors: true
+template_folder: templates
 
 gunicorn: # config apm-server if uses gunicorn wrapper
   timeout: 60
